@@ -9,8 +9,12 @@ This has been updated to work with the new protocol.
 var Client                = require('castv2-client').Client;
 var Youtube               = require('youtube-castv2-client').Youtube;
 var mdns                  = require('mdns');
-
-var browser = mdns.createBrowser(mdns.tcp('googlecast'));
+var sequence = [
+  mdns.rst.DNSServiceResolve(),
+  mdns.rst.getaddrinfo({ families: [0] }),
+  mdns.rst.makeAddressesUnique(),
+];
+var browser = mdns.createBrowser(mdns.tcp('googlecast'), { resolverSequence: sequence });
 
 browser.on('serviceUp', function(service) {
   console.log('found device "%s" at %s:%d', service.name, service.addresses[0], service.port);
